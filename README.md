@@ -16,3 +16,5 @@ Today, I built a Dictionary Web App that allows you to search for word meanings 
 ✔ JavaScript
 
 Every day in my web development journey, I'm learning something new! 🚀 What new projects are you working on? Drop your ideas in the comments! 💡
+
+![Image](https://github.com/user-attachments/assets/663c4f02-312f-4c8b-81c2-b0d939f07c61)
