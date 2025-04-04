@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Dictionary</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .dark-mode {
+            background-color: #333;
+            color: #f4f4f4;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .dark-mode .container {
+            background-color: #444;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .dark-mode h1 {
+            color: #66b3ff;
+        }
+
+        .search-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        #wordInput {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+
+        .dark-mode #wordInput {
+            background-color: #555;
+            color: #f4f4f4;
+            border-color: #777;
+        }
+
+        #searchBtn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #searchBtn:hover {
+            background-color: #0056b3;
+        }
+
+        .dark-mode #searchBtn {
+            background-color: #66b3ff;
+            color: #333;
+        }
+
+        .dark-mode #searchBtn:hover {
+            background-color: #80c7ff;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            text-align: left;
+        }
+
+        .dark-mode #result {
+            background-color: #555;
+            color: #f4f4f4;
+            border-color: #777;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .word-box h2 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dark-mode .word-box h2 {
+            color: #f4f4f4;
+        }
+
+        .part-of-speech {
+            color: #777;
+            font-style: italic;
+        }
+
+        .dark-mode .part-of-speech {
+            color: #bbb;
+        }
+
+        .phonetics {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .phonetics {
+            color: #ccc;
+        }
+
+        .word-box p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .dark-mode .word-box p {
+            color: #eee;
+        }
+
+        .copy-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background-color: #1e7e34;
+        }
+
+        .dark-mode .copy-btn {
+            background-color: #5cb85c;
+            color: #333;
+        }
+
+        .dark-mode .copy-btn:hover {
+            background-color: #4cae4c;
+        }
+
+        #wordList {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode #wordList {
+            background-color: #444;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        #wordList h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .dark-mode #wordList h2 {
+            color: #66b3ff;
+        }
+
+        #wordList p {
+            margin-bottom: 5px;
+        }
+
+        .dark-mode #wordList p {
+            color: #f4f4f4;
+        }
+
+        #darkModeToggle {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dark-mode #darkModeToggle {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        #darkModeToggle:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <button id="darkModeToggle">Toggle Dark Mode</button>
+    <div class="container">
+        <h1>Online Dictionary</h1>
+        <div class="search-container">
+            <input type="text" id="wordInput" placeholder="Enter a word">
+            <button id="searchBtn" onclick="searchWord()">Search</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <div class="container" id="wordList">
+        <h2>Simple Dictionary (A-Z)</h2>
+    </div>
+
+    <script>
+        document.getElementById("darkModeToggle").addEventListener("click", function() {
+            document.body.classList.toggle("dark-mode");
+        });
+
+        function searchWord() {
+            let word = document.getElementById("wordInput").value;
+            let resultDiv = document.getElementById("result");
+            if (word === "") {
+                resultDiv.innerHTML = "<p class='error'>Please enter a word!</p>";
+                return;
+            }
+
+            let url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0 && data[0].meanings && data[0].meanings.length > 0 && data[0].meanings[0].definitions && data[0].meanings[0].definitions.length > 0) {
+                        let meaning = data[0].meanings[0].definitions[0].definition;
+                        let example = data[0].meanings[0].definitions[0].example || "No example available";
+                        let partOfSpeech = data[0].meanings[0].partOfSpeech;
+                        let phonetics = data[0].phonetic || (data[0].phonetics && data[0].phonetics.length > 0 ? data[0].phonetics[0].text : "");
+                        let audio = data[0].phonetics && data[0].phonetics.length > 0 ? (data[0].phonetics[0].audio || (data[0].phonetics.length > 1 ? data[0].phonetics[1].audio : "")) : "";
+
+                        let resultHTML = `<div class='word-box'>
+                                                <h2>${word} <span class='part-of-speech'>(${partOfSpeech})</span></h2>
+                                                <p class='phonetics'>${phonetics}</p>
+                                                <p><strong>Meaning:</strong> ${meaning}</p>
+                                                <p><strong>Example:</strong> ${example}</p>
+                                           </div>`;
+
+                        if (audio) {
+                            resultHTML += `<audio controls><source src="${audio}" type="audio/mpeg"></audio>`;
+                        }
+
+                        resultHTML += `<button class='copy-btn' onclick="copyToClipboard('${meaning}')">📋 Copy</button>`;
+                        resultDiv.innerHTML = resultHTML;
+                    } else {
+                        resultDiv.innerHTML = "<p class='error'>Word not found in the external dictionary. Please check the A-Z list below.</p>";
+                    }
+                })
+                .catch(() => {
+                    resultDiv.innerHTML = "<p class='error'>Failed to fetch from the external dictionary. Please check the A-Z list below.</p>";
+                });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied to clipboard!");
+            });
+        }
+
+        const words = {
+            'A': 'Apple - A fruit.',
+            'B': 'Ball - A round object used in sports.',
+            'C': 'Cat - A small domesticated carnivorous mammal.',
+            'D': 'Dog - A loyal animal.',
+            'E': 'Elephant - The largest land animal.',
+            'F': 'Fish - An aquatic animal.',
+            'G': 'Goat - A domestic animal.',
+            'H': 'House - A place where people live.',
+            'I': 'Ice - Frozen water.',
+            'J': 'Jug - A container for liquids.',
+            'K': 'Kite - A flying object.',
+            'L': 'Lion - The king of the jungle.',
+            'M': 'Moon - The natural satellite of Earth.',
+            'N': 'Nest - A bird\'s home.',
+            'O': 'Orange - A citrus fruit.',
+            'P': 'Parrot - A talking bird.',
+            'Q': 'Queen - A female monarch.',
+            'R': 'Rainbow - A spectrum of colors.',
+            'S': 'Sun - The star of our solar system.',
+            'T': 'Tree - A plant with a trunk.',
+            'U': 'Umbrella - A device for rain protection.',
+            'V': 'Violin - A musical instrument.',
+            'W': 'Water - Essential for life.',
+            'X': 'Xylophone - A musical instrument.',
+            'Y': 'Yak - A long-haired domesticated animal.',
+            'Z': 'Zebra - A striped animal.'
+        };
+
+        let wordListDiv = document.getElementById("wordList");
+        wordListDiv.innerHTML += "<h2>Simple Dictionary (A-Z)</h2>";
+        for (let key in words) {
+            wordListDiv.innerHTML += `<p><strong>${key}:</strong> ${words[key]}</p>`;
+        }
+    </script>
+</body>
+</html>
